@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>页面不存在 · 中国人口观察</title>
+<style>
+  :root { --ink:#0B1220; --ink2:#5B6B80; --ink3:#94A3B8; --accent:#1E5EFF; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    min-height:100vh; display:grid; place-items:center; padding:24px;
+    background:#F4F6FA; color:var(--ink);
+    font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .box {
+    background:#fff; border:1px solid #E8EDF4; border-radius:16px;
+    padding:40px 36px; max-width:440px; width:100%; text-align:center;
+    box-shadow:0 2px 12px rgba(11,18,32,.05);
+  }
+  .mark {
+    width:46px; height:46px; margin:0 auto 18px; border-radius:12px;
+    display:grid; place-items:center; color:#fff; font-size:21px; font-weight:700;
+    background:linear-gradient(135deg,#1E5EFF,#0EA5E9);
+    box-shadow:0 4px 12px rgba(30,94,255,.28);
+  }
+  h1 { font-size:20px; font-weight:700; letter-spacing:-.2px; }
+  p { font-size:13px; color:var(--ink2); line-height:1.75; margin-top:10px; }
+  code {
+    font-family:ui-monospace,Consolas,monospace; font-size:12px;
+    background:#F4F6FA; border:1px solid #E8EDF4; border-radius:5px;
+    padding:1px 5px; color:var(--ink2);
+  }
+  .links { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:22px; }
+  a {
+    font-size:12.5px; text-decoration:none; color:var(--ink2);
+    border:1px solid #E8EDF4; border-radius:9px; padding:8px 14px;
+    background:#fff; transition:.15s;
+  }
+  a:hover { border-color:#C9D6F0; color:var(--ink); }
+  a.primary { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+  a.primary:hover { background:#1A52E0; color:#fff; }
+  .foot { font-size:11px; color:var(--ink3); margin-top:26px; }
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="mark">人</div>
+    <h1>页面不存在</h1>
+    <p>你访问的地址没有对应的页面。可能是链接拼写有误，或者该页面已调整。</p>
+    <div class="links">
+      <a class="primary" href="./">回到首页</a>
+      <a href="./map.html">分省分布</a>
+      <a href="./structure.html">人口结构</a>
+      <a href="./global.html">国际对比</a>
+      <a href="./sources.html">数据说明</a>
+    </div>
+    <div class="foot">中国人口观察 · China Population Observatory</div>
+  </div>
+</body>
+</html>

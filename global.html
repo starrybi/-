@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>国际对比 · 中国人口观察</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">人</div>
+      <div>
+        <div class="brand-name">中国人口观察</div>
+        <div class="brand-sub">China Population Observatory</div>
+      </div>
+    </div>
+    <nav>
+      <a href="index.html">总览</a>
+      <a href="map.html">分省分布</a>
+      <a href="structure.html">人口结构</a>
+      <a href="global.html" class="active">国际对比</a>
+      <a href="sources.html">数据说明</a>
+    </nav>
+    <div class="topbar-right">
+      <div class="pill"><span class="dot"></span><span>世界银行 WDI</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>国际对比</h1>
+      <div class="sub">中国 · 日本 · 韩国 · 印度 · 美国 —— 老龄化、生育率与人口规模</div>
+    </div>
+    <div class="head-tags">
+      <span class="tag ok">世界银行公开数据</span>
+      <span class="tag warn">国际可比口径，与中国国内口径略有差异</span>
+    </div>
+  </div>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="card" style="margin-bottom:16px">
+    <div class="card-head">
+      <div class="card-title">65 岁及以上人口占比</div>
+      <div class="card-note">单位：% · 1990–2024</div>
+    </div>
+    <div id="c-aging" class="chart" style="height:420px"></div>
+  </section>
+
+  <section class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">总和生育率</div>
+        <div class="card-note">2024 年 · 更替水平 2.1</div>
+      </div>
+      <div id="c-tfr" class="chart" style="height:320px"></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">总人口</div>
+        <div class="card-note">单位：亿 · 1990–2024</div>
+      </div>
+      <div id="c-pop" class="chart" style="height:320px"></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>数据来源：<b>世界银行</b> World Development Indicators · 指标代码 SP.POP.65UP.TO.ZS / SP.DYN.TFRT.IN / SP.POP.TOTL</div>
+    <div>中国部分与<b>国家统计局</b>口径交叉校验 · <a href="sources.html">数据说明</a></div>
+  </footer>
+</main>
+
+<script src="assets/echarts.min.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/charts.js"></script>
+<script>
+(function () {
+  const D = DATA, CH = CHARTS;
+  const wb = D.worldbank;
+  const chn = wb.p65.CHN['2024'];
+  const tfr = wb.tfr.CHN['2024'];
+  const pop = wb.pop.CHN['2024'];
+  const urb = wb.urban.CHN['2024'];
+
+  // 中国用国内更细的口径作为对照
+  const natl = D.national[D.national.length - 1];
+  const natl65 = natl.a65 != null ? natl.a65 / natl.population * 100 : null;
+
+  document.getElementById('kpis').innerHTML = [
+    { l: '中国 65+ 占比', v: chn.toFixed(2), u: '%', m: `世界银行 2024 · 国内口径 ${natl65 ? natl65.toFixed(2) : '—'}%`, c: 'warm' },
+    { l: '中国总和生育率', v: tfr.toFixed(2), u: '个', m: '更替水平 2.1，韩国 0.75 为最低', c: 'warm' },
+    { l: '中国总人口', v: (pop / 1e8).toFixed(2), u: '亿', m: '世界银行 2024', c: '' },
+    { l: '中国城镇化率', v: urb.toFixed(2), u: '%', m: '世界银行 2024 · 国内 2025 为 ' + natl.urban_rate + '%', c: 'green' }
+  ].map(k => `
+    <div class="kpi ${k.c}">
+      <div class="kpi-label">${k.l}</div>
+      <div class="kpi-value num">${k.v}<span class="unit">${k.u}</span></div>
+      <div class="kpi-meta">${k.m}</div>
+    </div>`).join('');
+
+  const charts = [];
+  const mount = (id, opt) => {
+    const c = echarts.init(document.getElementById(id));
+    c.setOption(opt); charts.push(c); return c;
+  };
+
+  mount('c-aging', CH.globalAging(D));
+  mount('c-tfr', CH.globalTFR(D));
+  mount('c-pop', CH.globalPop(D));
+
+  let t;
+  window.addEventListener('resize', () => {
+    clearTimeout(t);
+    t = setTimeout(() => charts.forEach(c => c.resize()), 120);
+  });
+})();
+</script>
+</body>
+</html>

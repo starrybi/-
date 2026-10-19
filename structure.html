@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>人口结构 · 中国人口观察</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">人</div>
+      <div>
+        <div class="brand-name">中国人口观察</div>
+        <div class="brand-sub">China Population Observatory</div>
+      </div>
+    </div>
+    <nav>
+      <a href="index.html">总览</a>
+      <a href="map.html">分省分布</a>
+      <a href="structure.html" class="active">人口结构</a>
+      <a href="global.html">国际对比</a>
+      <a href="sources.html">数据说明</a>
+    </nav>
+    <div class="topbar-right">
+      <div class="pill"><span class="dot"></span><span>2025 年 1% 抽样</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>人口年龄与结构</h1>
+      <div class="sub">年龄构成、性别构成、城乡构成 · 2010 六普 / 2020 七普 / 2025 年 1% 抽样</div>
+    </div>
+    <div class="head-tags">
+      <span class="tag">三档年龄口径互斥</span>
+      <span class="tag warn">2025 为抽样推算值</span>
+    </div>
+  </div>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">年龄三档构成变化</div>
+        <div class="card-note">占全国人口比重 · %</div>
+      </div>
+      <div id="c-age" class="chart" style="height:340px"></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">性别构成</div>
+        <div class="card-note">男 / 女占比 · %</div>
+      </div>
+      <div id="c-sex" class="chart" style="height:340px"></div>
+    </div>
+  </section>
+
+  <section class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">城乡构成</div>
+        <div class="card-note">2020 与 2025 对比 · %</div>
+      </div>
+      <div id="c-urban" class="chart" style="height:300px"></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">每 10 万人受教育程度（2025）</div>
+        <div class="card-note">单位：万人</div>
+      </div>
+      <div id="c-edu" class="chart" style="height:300px"></div>
+    </div>
+  </section>
+
+  <section class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">65 岁及以上占比最高的省份</div>
+        <div class="card-note">2020 七普 · %</div>
+      </div>
+      <div id="c-rank" class="chart" style="height:360px"></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">结构指标明细</div>
+        <div class="card-note">点击表头无排序，按年份排列</div>
+      </div>
+      <div class="tbl-wrap" style="padding:0 18px 14px">
+        <table class="tbl" id="tbl"></table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>数据来源：<b>国家统计局</b> 第六次全国人口普查公报（第 1 号）· 第七次全国人口普查公报（第四号、第五号、第七号）· 2025 年全国 1% 人口抽样调查主要数据公报</div>
+    <div><a href="sources.html">口径与更新说明</a></div>
+  </footer>
+</main>
+
+<script src="assets/echarts.min.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/charts.js"></script>
+<script>
+(function () {
+  const D = DATA, CH = CHARTS;
+  const g = D.structure;
+  const s = g.y2025;
+
+  document.getElementById('kpis').innerHTML = [
+    { l: '0–14 岁', v: s.age014_pct.toFixed(2), u: '%', m: `${s.age014.toLocaleString()} 万人`, c: '' },
+    { l: '15–59 岁', v: s.age1559_pct.toFixed(2), u: '%', m: `${s.age1559.toLocaleString()} 万人`, c: 'green' },
+    { l: '60 岁及以上', v: s.age60_pct.toFixed(2), u: '%', m: `${s.age60.toLocaleString()} 万人 · 较 2020 ${(s.age60_pct - g.y2020.age60_pct).toFixed(2)} pp`, c: 'warm' },
+    { l: '65 岁及以上', v: s.age65_pct.toFixed(2), u: '%', m: `${s.age65.toLocaleString()} 万人 · 较 2020 +${(s.age65_pct - g.y2020.age65_pct).toFixed(2)} pp`, c: 'warm' }
+  ].map(k => `
+    <div class="kpi ${k.c}">
+      <div class="kpi-label">${k.l}</div>
+      <div class="kpi-value num">${k.v}<span class="unit">${k.u}</span></div>
+      <div class="kpi-meta">${k.m}</div>
+    </div>`).join('');
+
+  const charts = [];
+  const mount = (id, opt) => {
+    const c = echarts.init(document.getElementById(id));
+    c.setOption(opt); charts.push(c); return c;
+  };
+
+  mount('c-age', CH.ageCompare(D));
+  mount('c-sex', CH.sexCompare(D));
+  mount('c-urban', CH.urbanCompare(D));
+  mount('c-edu', CH.education2025(D));
+  mount('c-rank', CH.prov65Rank(D));
+
+  const rows = [g.y2010, g.y2020, g.y2025];
+  const f = (v, d = 2) => (v == null ? '—' : Number(v).toFixed(d));
+  document.getElementById('tbl').innerHTML = `
+    <thead><tr>
+      <th>指标</th><th class="r">2010</th><th class="r">2020</th><th class="r">2025</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>总人口（万人）</td>${rows.map(r => `<td class="r"><b>${r.total ? r.total.toLocaleString() : '—'}</b></td>`).join('')}</tr>
+      <tr><td>0–14 岁占比</td>${rows.map(r => `<td class="r">${f(r.age014_pct)}%</td>`).join('')}</tr>
+      <tr><td>15–59 岁占比</td>${rows.map(r => `<td class="r">${f(r.age1559_pct)}%</td>`).join('')}</tr>
+      <tr><td>60 岁及以上占比</td>${rows.map(r => `<td class="r">${f(r.age60_pct)}%</td>`).join('')}</tr>
+      <tr><td>65 岁及以上占比</td>${rows.map(r => `<td class="r"><b>${f(r.age65_pct)}%</b></td>`).join('')}</tr>
+      <tr><td>男性占比</td>${rows.map(r => `<td class="r">${f(r.male_pct)}%</td>`).join('')}</tr>
+      <tr><td>女性占比</td>${rows.map(r => `<td class="r">${f(r.female_pct)}%</td>`).join('')}</tr>
+      <tr><td>总人口性别比</td>${rows.map(r => `<td class="r">${f(r.sex_ratio)}</td>`).join('')}</tr>
+      <tr><td>城镇化率</td>${rows.map(r => `<td class="r">${r.urban_pct != null ? f(r.urban_pct) + '%' : '—'}</td>`).join('')}</tr>
+      <tr><td>流动人口（万人）</td>${rows.map(r => `<td class="r">${r.floating ? r.floating.toLocaleString() : '—'}</td>`).join('')}</tr>
+    </tbody>`;
+
+  let t;
+  window.addEventListener('resize', () => {
+    clearTimeout(t);
+    t = setTimeout(() => charts.forEach(c => c.resize()), 120);
+  });
+})();
+</script>
+</body>
+</html>

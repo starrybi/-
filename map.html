@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分省分布 · 中国人口观察</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">人</div>
+      <div>
+        <div class="brand-name">中国人口观察</div>
+        <div class="brand-sub">China Population Observatory</div>
+      </div>
+    </div>
+    <nav>
+      <a href="index.html">总览</a>
+      <a href="map.html" class="active">分省分布</a>
+      <a href="structure.html">人口结构</a>
+      <a href="global.html">国际对比</a>
+      <a href="sources.html">数据说明</a>
+    </nav>
+    <div class="topbar-right">
+      <div class="pill"><span class="dot"></span><span>第七次全国人口普查</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>分省人口分布</h1>
+      <div class="sub">31 个省（自治区、直辖市）· 2020 年第七次全国人口普查 · 可与 2010 年六普对比</div>
+    </div>
+    <div class="head-tags">
+      <span class="tag">分级填色 · 自然断点</span>
+      <span class="tag warn">港澳台未纳入本次口径</span>
+    </div>
+  </div>
+
+  <section class="grid-map">
+    <div class="card">
+      <div class="chips" id="chips">
+        <button class="chip active" data-metric="pop">人口总量</button>
+        <button class="chip" data-metric="delta">十年增减</button>
+        <button class="chip" data-metric="p65">65+ 占比</button>
+      </div>
+      <div class="card-head" style="padding-top:12px">
+        <div class="card-title" id="map-title">2020 年常住人口</div>
+        <div class="card-note" id="map-note">点击省份查看详情 · 可滚轮缩放</div>
+      </div>
+      <div id="c-map" class="chart" style="height:560px"></div>
+    </div>
+
+    <div class="stack">
+      <div class="card">
+        <div class="prov-card" id="prov-card" style="margin-top:16px">
+          <div class="prov-name" id="prov-name">广东省</div>
+          <div class="prov-rows" id="prov-rows"></div>
+        </div>
+        <div class="card-head" style="padding-top:14px">
+          <div class="card-title">人口总量前十省份</div>
+          <div class="card-note">万人 · 2020</div>
+        </div>
+        <div id="c-top10" class="chart" style="height:330px"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>数据来源：<b>国家统计局</b>《第七次全国人口普查公报（第三号、第五号）》《第六次全国人口普查主要数据公报（第 2 号）》</div>
+    <div>底图：DataV GeoAtlas 省级边界 · <a href="sources.html">数据说明</a></div>
+  </footer>
+</main>
+
+<script src="assets/echarts.min.js"></script>
+<script src="assets/china-geo.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/charts.js"></script>
+<script>
+(function () {
+  const D = DATA, CH = CHARTS;
+  echarts.registerMap('china', window.__CHINA_GEO__);
+
+  const INIT = '广东省';
+  let current = INIT;
+  let metric = 'pop';
+  let mapChart = null;
+
+  const rankOf = name => D.province.findIndex(p => p.name === name) + 1;
+
+  function renderCard(name) {
+    const p = D.province.find(x => x.name === name);
+    const card = document.getElementById('prov-card');
+    if (!p) {
+      card.style.display = 'none';
+      return;
+    }
+    card.style.display = '';
+    const r = rankOf(name);
+    document.getElementById('prov-name').innerHTML =
+      p.name.replace(/(维吾尔|回族|壮族|自治区|特别行政区)/g, '') +
+      (r > 0 ? ` <span class="rank">TOP ${r}</span>` : '');
+
+    const d = p.delta != null ? Math.round(p.delta / 1e4) : null;
+    const rows = [
+      ['2020 年人口', Math.round(p.pop2020 / 1e4).toLocaleString(), '万'],
+      ['占全国比重', p.share2020 != null ? p.share2020.toFixed(2) : '—', '%'],
+      ['十年增减', d != null ? (d >= 0 ? '+' : '') + d.toLocaleString() : '—', '万'],
+      ['65+ 占比', p.p65_2020 != null ? p.p65_2020.toFixed(2) : '—', '%']
+    ];
+    document.getElementById('prov-rows').innerHTML = rows.map(([k, v, u]) => `
+      <div class="prov-row"><div class="k">${k}</div>
+      <div class="v num" style="${k === '十年增减' && d != null ? (d >= 0 ? 'color:#12B76A' : 'color:#E5484D') : ''}">${v}<span> ${u}</span></div></div>
+    `).join('');
+  }
+
+  function mountMap() {
+    const opt = CH.mapOption(D, metric);
+    if (!mapChart) {
+      mapChart = echarts.init(document.getElementById('c-map'));
+      mapChart.on('click', p => {
+        if (p && p.name && D.province.some(x => x.name === p.name)) {
+          current = p.name;
+          renderCard(current);
+        }
+      });
+    }
+    mapChart.setOption(opt, true);
+    mapChart.dispatchAction({ type: 'select', seriesIndex: 0, name: current });
+  }
+
+  const titles = {
+    pop: ['2020 年常住人口', '分级填色 · 自然断点 · 单位：万人'],
+    delta: ['2010→2020 年人口增减', '红色为减少、蓝色为增加 · 单位：万人'],
+    p65: ['65 岁及以上人口占比', '2020 年七普 · 单位：%']
+  };
+
+  function setMetric(m) {
+    metric = m;
+    document.querySelectorAll('#chips .chip').forEach(b =>
+      b.classList.toggle('active', b.dataset.metric === m));
+    document.getElementById('map-title').textContent = titles[m][0];
+    document.getElementById('map-note').textContent = titles[m][1];
+    mountMap();
+  }
+
+  document.getElementById('chips').addEventListener('click', e => {
+    const b = e.target.closest('.chip');
+    if (b) setMetric(b.dataset.metric);
+  });
+
+  renderCard(current);
+  setMetric('pop');
+
+  const t10 = echarts.init(document.getElementById('c-top10'));
+  t10.setOption(CH.top10Option(D));
+
+  let t;
+  window.addEventListener('resize', () => {
+    clearTimeout(t);
+    t = setTimeout(() => { mapChart.resize(); t10.resize(); }, 120);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>总览 · 中国人口观察</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">人</div>
+      <div>
+        <div class="brand-name">中国人口观察</div>
+        <div class="brand-sub">China Population Observatory</div>
+      </div>
+    </div>
+    <nav>
+      <a href="index.html" class="active">总览</a>
+      <a href="map.html">分省分布</a>
+      <a href="structure.html">人口结构</a>
+      <a href="global.html">国际对比</a>
+      <a href="sources.html">数据说明</a>
+    </nav>
+    <div class="topbar-right">
+      <div class="pill"><span class="dot"></span><span id="updated">数据加载中</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>全国人口总览</h1>
+      <div class="sub">2018–2025 年主要人口指标 · 年末常住人口口径 · 全国合计含现役军人</div>
+    </div>
+    <div class="head-tags">
+      <span class="tag ok">国家统计局 · 年度统计公报</span>
+      <span class="tag warn">2020 年起为七普修订口径</span>
+    </div>
+  </div>
+
+  <div class="notice">
+    <div>
+      <b>关于口径断点：</b>2018–2019 年的数据是当年公报发布的原始值（未修订）；第七次全国人口普查后，2020 年起改用修订口径。
+      两段数值不可直接比较，图中已用虚线标出断点。2020 年公报因普查未发布人口数据，该年数值由 2021 年公报「比上年末增加 48 万」反推。
+    </div>
+  </div>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="grid-main">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">年末全国人口</div>
+        <div class="card-note">单位：万人 · 2018–2025</div>
+      </div>
+      <div id="c-pop" class="chart" style="height:470px"></div>
+    </div>
+
+    <div class="stack">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">出生率 / 死亡率</div>
+          <div class="card-note">‰</div>
+        </div>
+        <div id="c-rate" class="chart" style="height:224px"></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">常住人口城镇化率</div>
+          <div class="card-note">%</div>
+        </div>
+        <div id="c-urban" class="chart" style="height:224px"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>数据来源：<b>国家统计局</b>《2018–2025 年国民经济和社会发展统计公报》 · 第七次全国人口普查公报</div>
+    <div>数据整理：中国人口观察 · 详见 <a href="sources.html">数据说明</a></div>
+  </footer>
+</main>
+
+<script src="assets/echarts.min.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/charts.js"></script>
+<script>
+(function () {
+  const D = DATA, CH = CHARTS;
+  const last = D.national[D.national.length - 1];
+  const first = D.national[0];
+  const prev = D.national[D.national.length - 2];
+
+  document.getElementById('updated').textContent =
+    '数据更新至 ' + last.year + ' 年末';
+
+  const p65 = last.a65 != null ? (last.a65 / last.population * 100) : null;
+  const p65first = first.a65 != null ? (first.a65 / first.population * 100) : null;
+  const dPop = prev ? last.population - prev.population : null;
+  const dUrban = last.urban_rate != null && first.urban_rate != null
+    ? last.urban_rate - first.urban_rate : null;
+  const dP65 = p65 != null && p65first != null ? p65 - p65first : null;
+  const dBirth = last.birth_rate != null && first.birth_rate != null
+    ? last.birth_rate - first.birth_rate : null;
+
+  const sgn = (v, d) => (v >= 0 ? '+' : '') + v.toFixed(d);
+  const kpis = [
+    {
+      label: '年末全国人口',
+      value: last.population.toLocaleString(),
+      unit: '万人',
+      meta: `<span class="kpi-meta down">▼ 较 ${prev.year} 年 <b>${dPop.toLocaleString()} 万</b></span>`,
+      cls: ''
+    },
+    {
+      label: '常住人口城镇化率',
+      value: last.urban_rate.toFixed(2),
+      unit: '%',
+      meta: `<span class="kpi-meta up">▲ 较 ${first.year} 年 <b>${sgn(dUrban, 2)} pp</b></span>`,
+      cls: 'green'
+    },
+    {
+      label: '65 岁及以上人口占比',
+      value: p65.toFixed(2),
+      unit: '%',
+      meta: `<span class="kpi-meta up">▲ 较 ${first.year} 年 <b>${sgn(dP65, 2)} pp</b></span>`,
+      cls: 'warm'
+    },
+    {
+      label: '出生率',
+      value: last.birth_rate.toFixed(2),
+      unit: '‰',
+      meta: `<span class="kpi-meta">▼ 较 ${first.year} 年 <b>${dBirth.toFixed(2)}‰</b></span>`,
+      cls: 'warm'
+    }
+  ];
+
+  document.getElementById('kpis').innerHTML = kpis.map(k => `
+    <div class="kpi ${k.cls}">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value num">${k.value}<span class="unit">${k.unit}</span></div>
+      ${k.meta}
+    </div>`).join('');
+
+  const charts = [];
+  function mount(id, option) {
+    const el = document.getElementById(id);
+    const c = echarts.init(el, null, { renderer: 'canvas' });
+    c.setOption(option);
+    charts.push(c);
+    return c;
+  }
+
+  mount('c-pop', CH.overviewPopulation(D));
+  mount('c-rate', CH.overviewRates(D));
+  mount('c-urban', CH.overviewUrban(D));
+
+  let t;
+  window.addEventListener('resize', () => {
+    clearTimeout(t);
+    t = setTimeout(() => charts.forEach(c => c.resize()), 120);
+  });
+})();
+</script>
+</body>
+</html>

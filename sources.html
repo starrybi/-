@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数据说明 · 中国人口观察</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">人</div>
+      <div>
+        <div class="brand-name">中国人口观察</div>
+        <div class="brand-sub">China Population Observatory</div>
+      </div>
+    </div>
+    <nav>
+      <a href="index.html">总览</a>
+      <a href="map.html">分省分布</a>
+      <a href="structure.html">人口结构</a>
+      <a href="global.html">国际对比</a>
+      <a href="sources.html" class="active">数据说明</a>
+    </nav>
+    <div class="topbar-right">
+      <div class="pill"><span class="dot"></span><span id="gen">—</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>数据说明</h1>
+      <div class="sub">来源、口径、覆盖范围与已知缺口 —— 每个数字都能追到原始公报</div>
+    </div>
+    <div class="head-tags">
+      <span class="tag ok">全部为公开发布的官方数据</span>
+      <span class="tag warn">存在 3 处已知缺口</span>
+    </div>
+  </div>
+
+  <div class="notice">
+    <div>
+      <b>抓取方式说明：</b>本站数据在构建阶段一次性抓取并落盘存档（<code>data/raw/</code>），运行时不再访问任何外部站点。
+      国家统计局的<b>数据库接口（data.stats.gov.cn）受 WAF 防护，程序化访问会被 403 拦截</b>，因此本站改用同一机构公开发布的
+      统计公报与普查公报 HTML 正文取数 —— 这些页面面向公众发布，无访问限制。
+    </div>
+  </div>
+
+  <section class="src-grid" id="src-grid" style="margin-bottom:16px"></section>
+
+  <section class="card" style="margin-bottom:16px">
+    <div class="card-head">
+      <div class="card-title">已知缺口与限制</div>
+      <div class="card-note">这些限制会随官方数据发布而更新</div>
+    </div>
+    <div style="padding:6px 18px 18px">
+      <table class="tbl">
+        <thead><tr><th style="width:22%">项目</th><th style="width:30%">状态</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>年度人口序列</b></td>
+            <td>仅 2018–2025</td>
+            <td>年度统计公报列表页只保留最近 8 年；更早年份的公报仅存于第三方转载站，为避免口径不可靠，未纳入。年鉴表格为 JPG 图片，无法机器解析。</td>
+          </tr>
+          <tr>
+            <td><b>分省人口</b></td>
+            <td>2010 / 2020 两个时点</td>
+            <td>分别来自六普与七普公报。2021–2025 年的分省数据需从国家数据库接口获取，该接口受 WAF 拦截，故未提供逐年滑块。</td>
+          </tr>
+          <tr>
+            <td><b>分年龄结构</b></td>
+            <td>只有三档，无五岁组</td>
+            <td>公报只公布 0–14 / 15–59 / 60+ / 65+ 四档；五岁年龄组需《中国人口普查年鉴》长表，未公开为可解析格式，因此未绘制人口金字塔。</td>
+          </tr>
+          <tr>
+            <td><b>2020 年公报缺口</b></td>
+            <td>已标注并反推</td>
+            <td>2020 年统计公报因七普未发布人口数据，年末人口由 2021 年公报「比上年末增加 48 万」反推为 141,212 万人。</td>
+          </tr>
+          <tr>
+            <td><b>2025 年两组数字</b></td>
+            <td>口径不同，非矛盾</td>
+            <td>年末人口 140,489 万人（统计公报，12 月 31 日）与 1% 抽样 140,545 万人（11 月 1 日）相差 56 万，属于时点差异。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">数据修订记录</div>
+        <div class="card-note">每次普查后，历史年度数据会被回溯调整</div>
+      </div>
+      <div style="padding:8px 18px 18px">
+        <table class="tbl">
+          <thead><tr><th style="width:26%">时间</th><th>事件</th></tr></thead>
+          <tbody>
+            <tr><td><b>2011.04</b></td><td>第六次全国人口普查公报发布，标准时点 2010-11-01</td></tr>
+            <tr><td><b>2021.05</b></td><td>第七次全国人口普查公报发布；2011–2019 年省级数据回溯修订，长时序在此断点</td></tr>
+            <tr><td><b>2026.02</b></td><td>2025 年国民经济和社会发展统计公报发布</td></tr>
+            <tr><td><b>2026.05</b></td><td>2025 年全国 1% 人口抽样调查主要数据公报发布</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">引用格式与许可</div>
+        <div class="card-note">转载或二次使用时请保留来源</div>
+      </div>
+      <div style="padding:12px 18px 18px;font-size:12px;color:var(--ink2);line-height:1.9">
+        <p>本站为数据可视化整理，原始数据版权归各发布机构所有。</p>
+        <p style="margin-top:10px">建议引用：</p>
+        <p style="background:#F7F9FC;border:1px solid var(--line);border-radius:9px;padding:12px;font-size:11.5px;line-height:1.8">
+          中国人口观察（2026）. 中国人口数据可视化.<br>
+          数据来源：国家统计局《国民经济和社会发展统计公报》（2018–2025）、第七次全国人口普查公报、
+          2025 年全国 1% 人口抽样调查主要数据公报；世界银行 World Development Indicators.
+        </p>
+        <p style="margin-top:12px;font-size:11.5px;color:var(--ink3)">
+          世界银行 WDI 数据采用 CC BY-4.0 许可；国家统计局数据按政府信息公开规定使用，转载需注明来源。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>构建信息：数据于 <b id="gen2">—</b> 生成 · 原始页面存档于 <code>data/raw/</code> · 重跑 <code>node etl/fetch.js && python etl/parse_*.py && node etl/build_data.js</code> 即可更新</div>
+    <div>中国人口观察 · 静态站点</div>
+  </footer>
+</main>
+
+<script src="assets/data.js"></script>
+<script>
+(function () {
+  const D = DATA;
+  document.getElementById('gen').textContent = '数据版本 ' + D.generatedAt;
+  document.getElementById('gen2').textContent = D.generatedAt;
+
+  const badge = s => s === 'ok'
+    ? '<span class="badge ok">正常</span>'
+    : '<span class="badge part">部分缺口</span>';
+
+  document.getElementById('src-grid').innerHTML = D.sources.map(s => `
+    <div class="src-card">
+      <div class="src-head">
+        <div class="src-name">${s.name}</div>
+        ${badge(s.status)}
+      </div>
+      <div class="src-meta">
+        <div><div class="k">发布机构</div><div class="v">${s.org}</div></div>
+        <div><div class="k">覆盖</div><div class="v">${s.coverage}</div></div>
+        <div><div class="k">更新</div><div class="v">${s.updated}</div></div>
+      </div>
+      <div class="src-note"><b>口径：</b>${s.calibers}<br><b>包含指标：</b>${s.metrics.join('、')}</div>
+      <div class="src-note">${s.note}</div>
+      <a class="src-link" href="${s.url}" target="_blank" rel="noopener">${s.url}</a>
+    </div>`).join('');
+})();
+</script>
+</body>
+</html>
